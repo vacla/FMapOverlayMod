@@ -1,0 +1,80 @@
+buildscript {
+    repositories {
+        jcenter()    
+        maven {
+            name = "Fabric"
+            url = "https://maven.fabricmc.net/"
+        }
+    }
+    dependencies {
+        classpath 'net.fabricmc:fabric-loom:0.4-SNAPSHOT'
+    }
+}
+
+apply plugin: "fabric-loom"
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+	mavenCentral()
+    maven { url 'https://masa.dy.fi/maven' }
+}
+
+ext.configFile = file "build.properties"
+
+configFile.withReader {
+	def prop = new Properties()
+	prop.load(it)
+	project.ext.config = new ConfigSlurper().parse prop
+}
+
+minecraft {
+    ext.mod_version = config.mod_version
+    
+    if(mod_version.endsWith('-dev')){
+    	mod_version = mod_version + "." + new Date().format('yyyyMMdd.HHmmss')
+    }
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:" + config.minecraft_version
+	mappings "net.fabricmc:yarn:" + config.mappings_version + ":v2"
+	modCompile "net.fabricmc:fabric-loader:" + config.fabric_loader_version
+	compile "com.google.code.findbugs:jsr305:3.0.2"
+	
+    modCompile "fi.dy.masa.malilib:malilib-fabric-" + config.minecraft_version_out + ":" + config.malilib_version
+    modCompile "io.github.prospector:modmenu:" + config.mod_menu_version
+}
+
+group = config.group + "." +config.mod_id // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = config.mod_file_name + '-' + config.minecraft_version_out
+version = project.minecraft.mod_version
+
+compileJava {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+	options.encoding = 'UTF-8'
+}
+
+processResources {
+
+	exclude '**/*.xcf'
+	exclude '**/xcf'
+	
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "mod_version", project.minecraft.mod_version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
+        expand "mod_version": project.minecraft.mod_version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "fabric.mod.json"
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
