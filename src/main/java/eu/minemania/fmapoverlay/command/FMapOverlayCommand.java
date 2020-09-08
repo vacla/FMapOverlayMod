@@ -37,16 +37,26 @@ public class FMapOverlayCommand extends FMapOverlayCommandBase
                     .then(argument("enable", bool()).executes(FMapOverlayCommand::names)))
                 .then(literal("help").executes(FMapOverlayCommand::help))
                 .then(literal("custom")
+                    .then(literal("alpha").executes(FMapOverlayCommand::customAlphaEnable)
+                        .then(argument("enable", bool()).executes(FMapOverlayCommand::customAlphaEnable))
+                        .then(literal("chunk")
+                            .then(argument("alpha", integer(0, 255)).executes(FMapOverlayCommand::customAlphaChunk)))
+                        .then(literal("edge")
+                            .then(argument("alpha", integer(0, 255)).executes(FMapOverlayCommand::customAlphaEdge)))
+                        .then(literal("line")
+                            .then(argument("alpha", integer(0, 255)).executes(FMapOverlayCommand::customAlphaLine))))
                     .then(literal("names").executes(FMapOverlayCommand::customNamesEnable)
                         .then(argument("enable", bool()).executes(FMapOverlayCommand::customNamesEnable))
-                        .then(argument("height", integer()).executes(FMapOverlayCommand::customNamesHeight)))
-                    .then(literal("overlay").executes(FMapOverlayCommand::customOverlayEnable)
-                        .then(argument("enable", bool()).executes(FMapOverlayCommand::customOverlayEnable))
-                        .then(argument("height", integer()).executes(FMapOverlayCommand::customOverlayHeight))))
+                        .then(argument("height", integer(1, 255)).executes(FMapOverlayCommand::customNamesHeight)))
+                    .then(literal("overlay").executes(FMapOverlayCommand::customOverlayHeightEnable)
+                        .then(argument("enable", bool()).executes(FMapOverlayCommand::customOverlayHeightEnable))
+                        .then(argument("height", integer(1, 255)).executes(FMapOverlayCommand::customOverlayHeight))))
                 .then(literal("lines").executes(FMapOverlayCommand::lines)
                         .then(argument("enable", bool()).executes(FMapOverlayCommand::lines)))
                 .then(literal("chunk").executes(FMapOverlayCommand::chunk)
-                        .then(argument("enable", bool()).executes(FMapOverlayCommand::chunk)));
+                        .then(argument("enable", bool()).executes(FMapOverlayCommand::chunk)))
+                .then(literal("edge").executes(FMapOverlayCommand::edge)
+                        .then(argument("enable", bool()).executes(FMapOverlayCommand::edge)));
         dispatcher.register(fmo);
     }
 
@@ -121,20 +131,88 @@ public class FMapOverlayCommand extends FMapOverlayCommandBase
         return 1;
     }
 
+    private static int customAlphaEnable(CommandContext<ServerCommandSource> context)
+    {
+        boolean enabled;
+        try
+        {
+            enabled = getBool(context, "enable");
+            Configs.Generic.OVERLAY_CUSTOM_ALPHA_ENABLE.setBooleanValue(enabled);
+        }
+        catch (Exception e)
+        {
+            Configs.Generic.OVERLAY_CUSTOM_ALPHA_ENABLE.toggleBooleanValue();
+            enabled = Configs.Generic.OVERLAY_CUSTOM_ALPHA_ENABLE.getBooleanValue();
+        }
+        localOutput(context.getSource(), String.format("custom overlay alpha %s", enabled ? "enabled" : "disabled"));
+        return 1;
+    }
+
+    private static int customAlphaChunk(CommandContext<ServerCommandSource> context)
+    {
+        int alpha;
+        try
+        {
+            alpha = getInteger(context, "alpha");
+            Configs.Generic.OVERLAY_CUSTOM_ALPHA_CHUNK.setIntegerValue(alpha);
+        }
+        catch (Exception e)
+        {
+            alpha = Configs.Generic.OVERLAY_CUSTOM_ALPHA_CHUNK.getIntegerValue();
+        }
+
+        localOutput(context.getSource(), "custom alpha for chunk: " + alpha);
+        return 1;
+    }
+
+    private static int customAlphaEdge(CommandContext<ServerCommandSource> context)
+    {
+        int alpha;
+        try
+        {
+            alpha = getInteger(context, "alpha");
+            Configs.Generic.OVERLAY_CUSTOM_ALPHA_EDGE.setIntegerValue(alpha);
+        }
+        catch (Exception e)
+        {
+            alpha = Configs.Generic.OVERLAY_CUSTOM_ALPHA_EDGE.getIntegerValue();
+        }
+
+        localOutput(context.getSource(), "custom alpha for edge: " + alpha);
+        return 1;
+    }
+
+    private static int customAlphaLine(CommandContext<ServerCommandSource> context)
+    {
+        int alpha;
+        try
+        {
+            alpha = getInteger(context, "alpha");
+            Configs.Generic.OVERLAY_CUSTOM_ALPHA_LINE.setIntegerValue(alpha);
+        }
+        catch (Exception e)
+        {
+            alpha = Configs.Generic.OVERLAY_CUSTOM_ALPHA_LINE.getIntegerValue();
+        }
+
+        localOutput(context.getSource(), "custom alpha for line: " + alpha);
+        return 1;
+    }
+
     private static int customNamesEnable(CommandContext<ServerCommandSource> context)
     {
         boolean enabled;
         try
         {
             enabled = getBool(context, "enable");
-            Configs.Generic.NAMES_CUSTOM_ENABLE.setBooleanValue(enabled);
+            Configs.Generic.NAMES_CUSTOM_HEIGHT_ENABLE.setBooleanValue(enabled);
         }
         catch (Exception e)
         {
-            Configs.Generic.NAMES_CUSTOM_ENABLE.toggleBooleanValue();
-            enabled = Configs.Generic.NAMES_CUSTOM_ENABLE.getBooleanValue();
+            Configs.Generic.NAMES_CUSTOM_HEIGHT_ENABLE.toggleBooleanValue();
+            enabled = Configs.Generic.NAMES_CUSTOM_HEIGHT_ENABLE.getBooleanValue();
         }
-        localOutput(context.getSource(), String.format("custom names %s", enabled ? "enabled" : "disabled"));
+        localOutput(context.getSource(), String.format("custom names height %s", enabled ? "enabled" : "disabled"));
         return 1;
     }
 
@@ -155,20 +233,20 @@ public class FMapOverlayCommand extends FMapOverlayCommandBase
         return 1;
     }
 
-    private static int customOverlayEnable(CommandContext<ServerCommandSource> context)
+    private static int customOverlayHeightEnable(CommandContext<ServerCommandSource> context)
     {
         boolean enabled;
         try
         {
             enabled = getBool(context, "enable");
-            Configs.Generic.OVERLAY_CUSTOM_ENABLE.setBooleanValue(enabled);
+            Configs.Generic.OVERLAY_CUSTOM_HEIGHT_ENABLE.setBooleanValue(enabled);
         }
         catch (Exception e)
         {
-            Configs.Generic.OVERLAY_CUSTOM_ENABLE.toggleBooleanValue();
-            enabled = Configs.Generic.OVERLAY_CUSTOM_ENABLE.getBooleanValue();
+            Configs.Generic.OVERLAY_CUSTOM_HEIGHT_ENABLE.toggleBooleanValue();
+            enabled = Configs.Generic.OVERLAY_CUSTOM_HEIGHT_ENABLE.getBooleanValue();
         }
-        localOutput(context.getSource(), String.format("custom overlay %s", enabled ? "enabled" : "disabled"));
+        localOutput(context.getSource(), String.format("custom overlay height %s", enabled ? "enabled" : "disabled"));
         return 1;
     }
 
@@ -220,6 +298,23 @@ public class FMapOverlayCommand extends FMapOverlayCommandBase
             Configs.Generic.OVERLAY_CHUNK.toggleBooleanValue();
         }
         localOutput(context.getSource(), String.format("Overlay chunk %s", enabled ? "enabled" : "disabled"));
+        return 1;
+    }
+
+    private static int edge(CommandContext<ServerCommandSource> context)
+    {
+        boolean enabled;
+        try
+        {
+            enabled = getBool(context, "enable");
+            Configs.Generic.OVERLAY_EDGE.setBooleanValue(enabled);
+        }
+        catch (Exception e)
+        {
+            enabled = !Configs.Generic.OVERLAY_EDGE.getBooleanValue();
+            Configs.Generic.OVERLAY_EDGE.toggleBooleanValue();
+        }
+        localOutput(context.getSource(), String.format("Overlay edge %s", enabled ? "enabled" : "disabled"));
         return 1;
     }
 

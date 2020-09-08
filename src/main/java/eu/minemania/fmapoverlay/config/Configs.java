@@ -28,21 +28,31 @@ public class Configs implements IConfigHandler
     public static class Generic
     {
         public static final ConfigBoolean ENABLED = new ConfigBoolean("enabled", true, "fmapoverlay.description.config.enabled");
-        public static final ConfigBoolean NAMES_CUSTOM_ENABLE = new ConfigBoolean("namesCustomEnable", true, "fmapoverlay.description.config.names_enable");
         public static final ConfigInteger NAMES_CUSTOM_HEIGHT = new ConfigInteger("namesCustomHeight", 62, 1, 255, "fmapoverlay.description.config.names_height");
-        public static final ConfigBoolean OVERLAY_CUSTOM_ENABLE = new ConfigBoolean("overlayCustomEnable", true, "fmapoverlay.description.config.overlay_enable");
+        public static final ConfigBoolean NAMES_CUSTOM_HEIGHT_ENABLE = new ConfigBoolean("namesCustomHeightEnable", true, "fmapoverlay.description.config.names_height_enable");
+        public static final ConfigInteger OVERLAY_CUSTOM_ALPHA_CHUNK = new ConfigInteger("overlayCustomAlphaChunk", 80, 0, 255, "fmapoverlay.description.config.overlay_alpha_chunk");
+        public static final ConfigInteger OVERLAY_CUSTOM_ALPHA_EDGE = new ConfigInteger("overlayCustomAlphaEdge", 200, 0, 255, "fmapoverlay.description.config.overlay_alpha_edge");
+        public static final ConfigBoolean OVERLAY_CUSTOM_ALPHA_ENABLE = new ConfigBoolean("overlayCustomAlphaEnable", false, "fmapoverlay.description.config.overlay_alpha_enable");
+        public static final ConfigInteger OVERLAY_CUSTOM_ALPHA_LINE = new ConfigInteger("overlayCustomAlphaLine", 200, 0, 255, "fmapoverlay.description.config.overlay_alpha_line");
         public static final ConfigInteger OVERLAY_CUSTOM_HEIGHT = new ConfigInteger("overlayCustomHeight", 62, 1, 255, "fmapoverlay.description.config.overlay_height");
+        public static final ConfigBoolean OVERLAY_CUSTOM_HEIGHT_ENABLE = new ConfigBoolean("overlayCustomHeightEnable", true, "fmapoverlay.description.config.overlay_height_enable");
         public static final ConfigBoolean OVERLAY_CHUNK = new ConfigBoolean("overlayChunk", false, "fmapoverlay.description.config.overlay_chunk");
+        public static final ConfigBoolean OVERLAY_EDGE = new ConfigBoolean("overlayEdge", false, "fmapoverlay.description.config.overlay_edge");
         public static final ConfigBoolean OVERLAY_LINE = new ConfigBoolean("overlayLine", false, "fmapoverlay.description.config.overlay_line");
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 ENABLED,
-                NAMES_CUSTOM_ENABLE,
                 NAMES_CUSTOM_HEIGHT,
-                OVERLAY_CUSTOM_ENABLE,
+                NAMES_CUSTOM_HEIGHT_ENABLE,
+                OVERLAY_CUSTOM_ALPHA_CHUNK,
+                OVERLAY_CUSTOM_ALPHA_EDGE,
+                OVERLAY_CUSTOM_ALPHA_ENABLE,
+                OVERLAY_CUSTOM_ALPHA_LINE,
+                OVERLAY_CUSTOM_HEIGHT_ENABLE,
                 OVERLAY_CUSTOM_HEIGHT,
-                OVERLAY_LINE,
-                OVERLAY_CHUNK
+                OVERLAY_CHUNK,
+                OVERLAY_EDGE,
+                OVERLAY_LINE
                 );
     }
 

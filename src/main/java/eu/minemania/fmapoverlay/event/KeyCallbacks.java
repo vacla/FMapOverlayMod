@@ -19,10 +19,11 @@ public class KeyCallbacks
         Hotkeys.NAMES_CUSTOM_HEIGHT_DOWN.getKeybind().setCallback(callbackHotkeys);
         Hotkeys.NAMES_CUSTOM_HEIGHT_UP.getKeybind().setCallback(callbackHotkeys);
         Hotkeys.OPEN_GUI_SETTINGS.getKeybind().setCallback(callbackHotkeys);
-        Hotkeys.OVERLAY_CUSTOM_ENABLE.getKeybind().setCallback(callbackHotkeys);
+        Hotkeys.OVERLAY_CUSTOM_HEIGHT_ENABLE.getKeybind().setCallback(callbackHotkeys);
         Hotkeys.OVERLAY_CUSTOM_HEIGHT_DOWN.getKeybind().setCallback(callbackHotkeys);
         Hotkeys.OVERLAY_CUSTOM_HEIGHT_UP.getKeybind().setCallback(callbackHotkeys);
         Hotkeys.OVERLAY_CHUNK.getKeybind().setCallback(callbackHotkeys);
+        Hotkeys.OVERLAY_EDGE.getKeybind().setCallback(callbackHotkeys);
         Hotkeys.OVERLAY_LINE.getKeybind().setCallback(callbackHotkeys);
     }
 
@@ -49,7 +50,7 @@ public class KeyCallbacks
             }
             else if (key == Hotkeys.NAMES_CUSTOM_ENABLE.getKeybind())
             {
-                Configs.Generic.NAMES_CUSTOM_ENABLE.toggleBooleanValue();
+                Configs.Generic.NAMES_CUSTOM_HEIGHT_ENABLE.toggleBooleanValue();
                 return true;
             }
             else if (key == Hotkeys.NAMES_CUSTOM_HEIGHT_DOWN.getKeybind())
@@ -70,9 +71,9 @@ public class KeyCallbacks
                 }
                 return true;
             }
-            else if (key == Hotkeys.OVERLAY_CUSTOM_ENABLE.getKeybind())
+            else if (key == Hotkeys.OVERLAY_CUSTOM_HEIGHT_ENABLE.getKeybind())
             {
-                Configs.Generic.OVERLAY_CUSTOM_ENABLE.toggleBooleanValue();
+                Configs.Generic.OVERLAY_CUSTOM_HEIGHT_ENABLE.toggleBooleanValue();
                 return true;
             }
             else if (key == Hotkeys.OVERLAY_CUSTOM_HEIGHT_DOWN.getKeybind())
@@ -96,6 +97,11 @@ public class KeyCallbacks
             else if (key == Hotkeys.OVERLAY_CHUNK.getKeybind())
             {
                 Configs.Generic.OVERLAY_CHUNK.toggleBooleanValue();
+                return true;
+            }
+            else if (key == Hotkeys.OVERLAY_EDGE.getKeybind())
+            {
+                Configs.Generic.OVERLAY_EDGE.toggleBooleanValue();
                 return true;
             }
             else if (key == Hotkeys.OVERLAY_LINE.getKeybind())
