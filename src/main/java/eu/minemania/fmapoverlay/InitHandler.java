@@ -13,7 +13,7 @@ import fi.dy.masa.malilib.interfaces.IInitializationHandler;
 import fi.dy.masa.malilib.interfaces.IRenderer;
 import net.minecraft.client.MinecraftClient;
 
-public class InitHandler implements IInitializationHandler 
+public class InitHandler implements IInitializationHandler
 {
     @Override
     public void registerModHandlers()

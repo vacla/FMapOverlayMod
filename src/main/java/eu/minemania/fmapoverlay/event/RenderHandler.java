@@ -22,7 +22,7 @@ public class RenderHandler implements IRenderer
 
         if (Configs.Generic.ENABLED.getBooleanValue() && mc.world != null && mc.player != null)
         {
-            OverlayRenderer.renderOverlays(mc, partialTicks);
+            OverlayRenderer.renderOverlays(mc, matrixStack);
         }
     }
 }

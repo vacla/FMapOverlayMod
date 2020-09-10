@@ -32,26 +32,30 @@ public class DataManager
         configGuiTab = tab;
     }
 
+    private static boolean justPressed;
+
     /**
      * Logs the message to the user
+     *
      * @param message The message to log
      */
     public static void logMessage(String message)
     {
         LiteralText displayMessage = new LiteralText(message);
         displayMessage.formatted(Formatting.GREEN);
-        MinecraftClient.getInstance().player.sendMessage(displayMessage);
+        MinecraftClient.getInstance().player.sendMessage(displayMessage, false);
     }
 
     /**
      * Logs the error message to the user
+     *
      * @param message The error message to log
      */
     public static void logError(String message)
     {
         LiteralText displayMessage = new LiteralText(message);
         displayMessage.formatted(Formatting.RED);
-        MinecraftClient.getInstance().player.sendMessage(displayMessage);
+        MinecraftClient.getInstance().player.sendMessage(displayMessage, false);
     }
 
     public static void load()
@@ -60,7 +64,7 @@ public class DataManager
 
         JsonElement element = JsonUtils.parseJsonFile(file);
 
-        if(element != null && element.isJsonObject())
+        if (element != null && element.isJsonObject())
         {
 
             JsonObject root = element.getAsJsonObject();
@@ -72,7 +76,8 @@ public class DataManager
                     configGuiTab = ConfigGuiTab.valueOf(root.get("config_gui_tab").getAsString());
                 }
                 catch (Exception e)
-                {}
+                {
+                }
 
                 if (configGuiTab == null)
                 {
@@ -91,7 +96,7 @@ public class DataManager
 
     public static void save(boolean forceSave)
     {
-        if(canSave == false && forceSave == false)
+        if (canSave == false && forceSave == false)
         {
             return;
         }
@@ -110,7 +115,7 @@ public class DataManager
     {
         File dir = getCurrentConfigDirectory();
 
-        if(dir.exists() == false && dir.mkdirs() == false)
+        if (dir.exists() == false && dir.mkdirs() == false)
         {
             FMapOverlay.logger.warn("Failed to create the config directory '{}'", dir.getAbsolutePath());
         }
@@ -123,9 +128,9 @@ public class DataManager
         MinecraftClient mc = MinecraftClient.getInstance();
         String name = StringUtils.getWorldOrServerName();
 
-        if(name != null)
+        if (name != null)
         {
-            if(globalData)
+            if (globalData)
             {
                 return Reference.MOD_ID + "_" + name + ".json";
             }
@@ -141,5 +146,15 @@ public class DataManager
     public static File getCurrentConfigDirectory()
     {
         return new File(FileUtils.getConfigDirectory(), Reference.MOD_ID);
+    }
+
+    public static boolean getJustPressed()
+    {
+        return justPressed;
+    }
+
+    public static void setJustPressed(boolean pressed)
+    {
+        justPressed = pressed;
     }
 }

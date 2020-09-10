@@ -1,43 +1,34 @@
 {
-    "schemaVersion": 1,
-    "id": "fmapoverlay",
-    "name": "FMapOverlay",
-    "version": "${mod_version}",
-
-    "description": "Updated Faction Map Overlay.",
-    "authors": [
-        "Arnevdl29",
-        "Kyzderp"
+  "schemaVersion": 1,
+  "id": "fmapoverlay",
+  "name": "FMapOverlay",
+  "version": "${mod_version}",
+  "description": "Updated Faction Map Overlay.",
+  "authors": [
+    "Arnevdl29",
+    "Kyzderp"
+  ],
+  "contact": {
+    "homepage": "",
+    "issues": "https://github.com/vacla/FMapOverlayMod/issues",
+    "sources": "https://github.com/vacla/FMapOverlayMod",
+    "twitter": "https://twitter.com/ArneLangenbergh",
+    "discord": "https://discord.gg/VTHVVgt"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "eu.minemania.fmapoverlay.FMapOverlay"
     ],
-    "contact": {
-        "homepage": "",
-        "issues": "https://github.com/vacla/FMapOverlayMod/issues",
-        "sources": "https://github.com/vacla/FMapOverlayMod",
-        "twitter": "https://twitter.com/ArneLangenbergh",
-        "discord": "https://discord.gg/VTHVVgt"
-    },
-
-    "license": "MIT",
-
-    "environment": "client",
-    "entrypoints": {
-        "client": [
-            "eu.minemania.fmapoverlay.FMapOverlay"
-        ],
-        "modmenu": [
-            "eu.minemania.fmapoverlay.compat.modmenu.ModMenuImpl"
-        ]
-    },
-
-    "mixins": [
-        "mixins.fmapoverlay.json"
-    ],
-
-    "depends": {
-        "malilib": ">=0.10.0-dev.21"
-    },
-
-    "custom": {
-        "modmenu:clientsideOnly": true
-    }
+    "modmenu": [
+      "eu.minemania.fmapoverlay.compat.modmenu.ModMenuImpl"
+    ]
+  },
+  "mixins": [
+    "mixins.fmapoverlay.json"
+  ],
+  "depends": {
+    "malilib": ">=0.10.0-dev.21"
+  }
 }

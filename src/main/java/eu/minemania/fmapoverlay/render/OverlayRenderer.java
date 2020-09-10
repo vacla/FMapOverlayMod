@@ -7,6 +7,7 @@ import eu.minemania.fmapoverlay.data.DataManager;
 import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
@@ -59,7 +60,7 @@ public class OverlayRenderer
         loginTime = System.currentTimeMillis();
     }
 
-    public static void renderOverlays(MinecraftClient mc, float partialTicks)
+    public static void renderOverlays(MinecraftClient mc, MatrixStack matrices)
     {
         Entity entity = mc.getCameraEntity();
 
@@ -91,14 +92,14 @@ public class OverlayRenderer
         Vec3d cameraPos = mc.gameRenderer.getCamera().getPos();
 
         drawNames(cameraPos.x, cameraPos.y, cameraPos.z);
-        drawOverlay(mc, cameraPos.x, cameraPos.y, cameraPos.z);
+        drawOverlay(mc, cameraPos.x, cameraPos.y, cameraPos.z, matrices);
     }
 
-    public static void drawOverlay(MinecraftClient mc, double dx, double dy, double dz)
+    public static void drawOverlay(MinecraftClient mc, double dx, double dy, double dz, MatrixStack matrices)
     {
         mc.getProfiler().push("fmo_entities");
         RenderSystem.pushMatrix();
-        RenderSystem.disableLighting();
+        RenderUtils.disableDiffuseLighting();
         RenderSystem.disableCull();
         RenderUtils.setupBlend();
         RenderSystem.disableTexture();
@@ -108,11 +109,11 @@ public class OverlayRenderer
         boolean foggy = GL11.glIsEnabled(GL11.GL_FOG);
         RenderSystem.disableFog();
 
-        RenderSystem.translated(-dx,-dy,-dz);
-        for(Chunk chunk : toDraw)
+        RenderSystem.translated(-dx, -dy, -dz);
+        for (Chunk chunk : toDraw)
         {
             Tessellator tessellator = Tessellator.getInstance();
-            if(isFixed)
+            if (isFixed)
             {
                 chunk.shadeChunk(tessellator, fixedY);
             }
@@ -128,23 +129,23 @@ public class OverlayRenderer
                 }
             }
         }
-        if(foggy)
+        if (foggy)
         {
             RenderSystem.enableFog();
         }
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
         RenderSystem.enableCull();
-        RenderSystem.enableLighting();
+        RenderUtils.enableDiffuseLightingForLevel(matrices);
         RenderSystem.popMatrix();
         mc.getProfiler().pop();
     }
 
     public static void drawNames(double dx, double dy, double dz)
     {
-        for(Chunk chunk : toDraw)
+        for (Chunk chunk : toDraw)
         {
-            if(isFixed)
+            if (isFixed)
             {
                 chunk.drawName(fixedY + 1.6, dx, dy, dz);
             }
@@ -162,7 +163,7 @@ public class OverlayRenderer
 
     public static boolean parseMap()
     {
-        if(lines.size() < 10)
+        if (lines.size() < 10)
         {
             return false;
         }
@@ -176,7 +177,7 @@ public class OverlayRenderer
 
         line = lines.get(18);
         line = line.replaceAll("\u00A7.?", "");
-        if(line.length() > 2)
+        if (line.length() > 2)
         {
             StringBuilder name = new StringBuilder();
             char character = '"';
@@ -201,13 +202,13 @@ public class OverlayRenderer
             factions.put('-', "Wilderness");
         }
 
-        if(!originFaction.equals("Wilderness") && !factions.containsValue(originFaction))
+        if (!originFaction.equals("Wilderness") && !factions.containsValue(originFaction))
         {
             factions.put('+', originFaction);
         }
 
         int n = factions.size();
-        if(factions.size() % 2 == 0)
+        if (factions.size() % 2 == 0)
         {
             n++;
         }
@@ -244,7 +245,7 @@ public class OverlayRenderer
                 {
                     name = originFaction;
                 }
-                if(colors.get(name) != null)
+                if (colors.get(name) != null)
                 {
                     Chunk toAdd = new Chunk(name, currentX, currentZ, colors.get(name));
                     if (!toDraw.contains(toAdd))
@@ -285,7 +286,7 @@ public class OverlayRenderer
 
     public static int getSize()
     {
-        if(lines == null)
+        if (lines == null)
         {
             return 0;
         }

@@ -25,7 +25,7 @@ public class FMapOverlay implements ClientModInitializer
         }
         catch (LinkageError e)
         {
-            throw new IllegalStateException("Incompatible Malilib version (" + StringUtils.getModVersionString(MaLiLibReference.MOD_ID) + ")" , e);
+            throw new IllegalStateException("Incompatible Malilib version (" + StringUtils.getModVersionString(MaLiLibReference.MOD_ID) + ")", e);
         }
     }
 

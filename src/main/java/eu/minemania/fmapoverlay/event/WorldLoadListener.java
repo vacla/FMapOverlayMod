@@ -21,7 +21,7 @@ public class WorldLoadListener implements IWorldLoadListener
         }
         else
         {
-            if(worldAfter != null)
+            if (worldAfter != null)
             {
                 OverlayRenderer.resetRenderTimeout();
             }

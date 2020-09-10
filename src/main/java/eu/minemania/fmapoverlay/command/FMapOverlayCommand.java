@@ -34,23 +34,23 @@ public class FMapOverlayCommand extends FMapOverlayCommandBase
                 .then(literal("unlock").executes(FMapOverlayCommand::unfix))
                 .then(literal("unfix").executes(FMapOverlayCommand::unfix))
                 .then(literal("names").executes(FMapOverlayCommand::names)
-                    .then(argument("enable", bool()).executes(FMapOverlayCommand::names)))
+                        .then(argument("enable", bool()).executes(FMapOverlayCommand::names)))
                 .then(literal("help").executes(FMapOverlayCommand::help))
                 .then(literal("custom")
-                    .then(literal("alpha").executes(FMapOverlayCommand::customAlphaEnable)
-                        .then(argument("enable", bool()).executes(FMapOverlayCommand::customAlphaEnable))
-                        .then(literal("chunk")
-                            .then(argument("alpha", integer(0, 255)).executes(FMapOverlayCommand::customAlphaChunk)))
-                        .then(literal("edge")
-                            .then(argument("alpha", integer(0, 255)).executes(FMapOverlayCommand::customAlphaEdge)))
-                        .then(literal("line")
-                            .then(argument("alpha", integer(0, 255)).executes(FMapOverlayCommand::customAlphaLine))))
-                    .then(literal("names").executes(FMapOverlayCommand::customNamesEnable)
-                        .then(argument("enable", bool()).executes(FMapOverlayCommand::customNamesEnable))
-                        .then(argument("height", integer(1, 255)).executes(FMapOverlayCommand::customNamesHeight)))
-                    .then(literal("overlay").executes(FMapOverlayCommand::customOverlayHeightEnable)
-                        .then(argument("enable", bool()).executes(FMapOverlayCommand::customOverlayHeightEnable))
-                        .then(argument("height", integer(1, 255)).executes(FMapOverlayCommand::customOverlayHeight))))
+                        .then(literal("alpha").executes(FMapOverlayCommand::customAlphaEnable)
+                                .then(argument("enable", bool()).executes(FMapOverlayCommand::customAlphaEnable))
+                                .then(literal("chunk")
+                                        .then(argument("alpha", integer(0, 255)).executes(FMapOverlayCommand::customAlphaChunk)))
+                                .then(literal("edge")
+                                        .then(argument("alpha", integer(0, 255)).executes(FMapOverlayCommand::customAlphaEdge)))
+                                .then(literal("line")
+                                        .then(argument("alpha", integer(0, 255)).executes(FMapOverlayCommand::customAlphaLine))))
+                        .then(literal("names").executes(FMapOverlayCommand::customNamesEnable)
+                                .then(argument("enable", bool()).executes(FMapOverlayCommand::customNamesEnable))
+                                .then(argument("height", integer(1, 255)).executes(FMapOverlayCommand::customNamesHeight)))
+                        .then(literal("overlay").executes(FMapOverlayCommand::customOverlayHeightEnable)
+                                .then(argument("enable", bool()).executes(FMapOverlayCommand::customOverlayHeightEnable))
+                                .then(argument("height", integer(1, 255)).executes(FMapOverlayCommand::customOverlayHeight))))
                 .then(literal("lines").executes(FMapOverlayCommand::lines)
                         .then(argument("enable", bool()).executes(FMapOverlayCommand::lines)))
                 .then(literal("chunk").executes(FMapOverlayCommand::chunk)
@@ -62,7 +62,7 @@ public class FMapOverlayCommand extends FMapOverlayCommandBase
 
     private static int info(CommandContext<ServerCommandSource> context)
     {
-        localOutput(context.getSource(), Reference.MOD_NAME + " ["+ Reference.MOD_VERSION+"]");
+        localOutput(context.getSource(), Reference.MOD_NAME + " [" + Reference.MOD_VERSION + "]");
         localOutputT(context.getSource(), "fmapoverlay.message.command.info");
 
         return 1;
@@ -84,7 +84,7 @@ public class FMapOverlayCommand extends FMapOverlayCommandBase
 
     private static int display(CommandContext<ServerCommandSource> context)
     {
-        if(OverlayRenderer.parseMap())
+        if (OverlayRenderer.parseMap())
         {
             localOutput(context.getSource(), "Displaying faction map overlay");
         }
@@ -323,18 +323,18 @@ public class FMapOverlayCommand extends FMapOverlayCommandBase
         localOutputT(context.getSource(), "fmapoverlay.message.command.help", Reference.MOD_NAME, Reference.MOD_VERSION);
         int cmdCount = 0;
         CommandDispatcher<ServerCommandSource> dispatcher = Command.commandDispatcher;
-        for(CommandNode<ServerCommandSource> command : dispatcher.getRoot().getChildren())
+        for (CommandNode<ServerCommandSource> command : dispatcher.getRoot().getChildren())
         {
             String cmdName = command.getName();
-            if(ClientCommandManager.isClientSideCommand(cmdName))
+            if (ClientCommandManager.isClientSideCommand(cmdName))
             {
                 Map<CommandNode<ServerCommandSource>, String> usage = dispatcher.getSmartUsage(command, context.getSource());
-                for(String u : usage.values())
+                for (String u : usage.values())
                 {
                     ClientCommandManager.sendFeedback(new LiteralText("/" + cmdName + " " + u));
                 }
                 cmdCount += usage.size();
-                if(usage.size() == 0)
+                if (usage.size() == 0)
                 {
                     ClientCommandManager.sendFeedback(new LiteralText("/" + cmdName));
                     cmdCount++;

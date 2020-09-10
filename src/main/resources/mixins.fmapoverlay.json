@@ -1,15 +1,15 @@
 {
-    "required": true,
-    "package": "eu.minemania.fmapoverlay.mixin",
-    "minVersion": "0.7",
-    "client": [
-        "MixinChatHud",
-    	"MixinClientPlayerEntity",
-    	"MixinClientPlayNetworkHandler",
-    	"MixinCommandSuggestor",
-    	"MixinTextFieldWidget"
-    ],
-    "injectors": {
-    	"defaultRequire": 1
-    }
+  "required": true,
+  "package": "eu.minemania.fmapoverlay.mixin",
+  "minVersion": "0.7",
+  "client": [
+    "MixinChatHud",
+    "MixinClientPlayerEntity",
+    "MixinClientPlayNetworkHandler",
+    "MixinCommandSuggestor",
+    "MixinTextFieldWidget"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }
