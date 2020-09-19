@@ -70,7 +70,7 @@ public class OverlayRenderer
             toDraw = new LinkedList<>();
             factions = new HashMap<>();
             isFixed = false;
-            fixedY = 64;
+            fixedY = 80;
             drawNames = false;
 
             colors = new HashMap<>();
