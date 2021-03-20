@@ -1,4 +1,5 @@
 {
+  "fmapoverlay.description.config.debug": "Enables debugging of FMapOverlay",
   "fmapoverlay.description.config.enabled": "Enables FactionMapOverlay fully",
   "fmapoverlay.description.config.names_height_enable": "Enables custom height where the faction name displays.",
   "fmapoverlay.description.config.names_height": "Sets the height where custom name get displayed",

@@ -2,6 +2,8 @@ package eu.minemania.fmapoverlay.event;
 
 import eu.minemania.fmapoverlay.config.Configs;
 import eu.minemania.fmapoverlay.data.DataManager;
+import eu.minemania.fmapoverlay.network.ClientPacketChannelHandler;
+import eu.minemania.fmapoverlay.network.PluginTownyPacketHandler;
 import eu.minemania.fmapoverlay.render.OverlayRenderer;
 import fi.dy.masa.malilib.interfaces.IWorldLoadListener;
 import net.minecraft.client.MinecraftClient;
@@ -18,6 +20,11 @@ public class WorldLoadListener implements IWorldLoadListener
         if (worldBefore != null)
         {
             DataManager.save();
+            if (worldAfter == null)
+            {
+                ClientPacketChannelHandler.getInstance().unregisterClientChannelHandler(PluginTownyPacketHandler.INSTANCE);
+                PluginTownyPacketHandler.INSTANCE.reset();
+            }
         }
         else
         {
@@ -31,6 +38,10 @@ public class WorldLoadListener implements IWorldLoadListener
     @Override
     public void onWorldLoadPost(@Nullable ClientWorld worldBefore, @Nullable ClientWorld worldAfter, MinecraftClient mc)
     {
+        if (worldBefore == null && worldAfter != null && Configs.Generic.ENABLED.getBooleanValue())
+        {
+            ClientPacketChannelHandler.getInstance().registerClientChannelHandler(PluginTownyPacketHandler.INSTANCE);
+        }
         if (worldAfter != null)
         {
             DataManager.load();

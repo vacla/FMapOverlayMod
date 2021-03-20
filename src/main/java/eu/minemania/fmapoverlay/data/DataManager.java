@@ -19,6 +19,7 @@ import java.io.File;
 public class DataManager
 {
     private static boolean canSave;
+    private static TownyData townyData;
 
     private static ConfigGuiTab configGuiTab = ConfigGuiTab.GENERIC;
 
@@ -58,6 +59,16 @@ public class DataManager
         MinecraftClient.getInstance().player.sendMessage(displayMessage, false);
     }
 
+    public static void setTownyPlugin(TownyData townyDataPlugin)
+    {
+        townyData = townyDataPlugin;
+    }
+
+    public static TownyData getTownyPlugin()
+    {
+        return townyData;
+    }
+
     public static void load()
     {
         File file = getCurrentStorageFile(true);
@@ -75,7 +86,7 @@ public class DataManager
                 {
                     configGuiTab = ConfigGuiTab.valueOf(root.get("config_gui_tab").getAsString());
                 }
-                catch (Exception e)
+                catch (Exception ignored)
                 {
                 }
 
@@ -96,7 +107,7 @@ public class DataManager
 
     public static void save(boolean forceSave)
     {
-        if (canSave == false && forceSave == false)
+        if (!canSave && !forceSave)
         {
             return;
         }
@@ -115,7 +126,7 @@ public class DataManager
     {
         File dir = getCurrentConfigDirectory();
 
-        if (dir.exists() == false && dir.mkdirs() == false)
+        if (!dir.exists() && !dir.mkdirs())
         {
             FMapOverlay.logger.warn("Failed to create the config directory '{}'", dir.getAbsolutePath());
         }

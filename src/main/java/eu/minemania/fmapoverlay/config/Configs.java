@@ -27,6 +27,7 @@ public class Configs implements IConfigHandler
      */
     public static class Generic
     {
+        public static final ConfigBoolean DEBUG = new ConfigBoolean("debug", false, "fmapoverlay.description.config.debug");
         public static final ConfigBoolean ENABLED = new ConfigBoolean("enabled", true, "fmapoverlay.description.config.enabled");
         public static final ConfigInteger NAMES_CUSTOM_HEIGHT = new ConfigInteger("namesCustomHeight", 79, 1, 255, "fmapoverlay.description.config.names_height");
         public static final ConfigBoolean NAMES_CUSTOM_HEIGHT_ENABLE = new ConfigBoolean("namesCustomHeightEnable", true, "fmapoverlay.description.config.names_height_enable");
@@ -41,6 +42,7 @@ public class Configs implements IConfigHandler
         public static final ConfigBoolean OVERLAY_LINE = new ConfigBoolean("overlayLine", false, "fmapoverlay.description.config.overlay_line");
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
+                DEBUG,
                 ENABLED,
                 NAMES_CUSTOM_HEIGHT,
                 NAMES_CUSTOM_HEIGHT_ENABLE,

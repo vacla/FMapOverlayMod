@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import eu.minemania.fmapoverlay.FMapOverlay;
 import eu.minemania.fmapoverlay.config.Configs;
 import eu.minemania.fmapoverlay.data.DataManager;
+import eu.minemania.fmapoverlay.data.TownyData;
 import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Tessellator;
@@ -14,8 +15,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 
 public class OverlayRenderer
 {
@@ -28,6 +28,10 @@ public class OverlayRenderer
     private static double fixedY;
     private static boolean drawNames;
     static HashMap<String, Integer> colors;
+    private static boolean isTowny;
+    private static Map<String, String> typeArray = new HashMap<>();
+    private static List<String> listRows = new ArrayList<>();
+    private static int[] chunkCoords;
 
     // https://stackoverflow.com/questions/470690/how-to-automatically-generate-n-distinct-colors
     public static final int[] KELLY_COLORS = {
@@ -76,6 +80,7 @@ public class OverlayRenderer
             colors = new HashMap<>();
             colors.put("SafeZone", 0xFFAA00);
             colors.put("WarZone", 0xAA0000);
+            colors.put("Unclaimed", 0xFFAA00);
             // Don't render before the player has been placed in the actual proper position,
             // otherwise some of the renderers mess up.
             // The magic 8.5, 65, 8.5 comes from the WorldClient constructor
@@ -162,6 +167,60 @@ public class OverlayRenderer
     }
 
     public static boolean parseMap()
+    {
+        if (isTowny)
+        {
+            return renderTowny();
+        }
+        return renderFactions();
+    }
+
+    public static void reset()
+    {
+        lines.clear();
+        toDraw.clear();
+    }
+
+    public static void clearLines()
+    {
+        lines.clear();
+    }
+
+    public static void fix()
+    {
+        isFixed = true;
+        fixedY = MinecraftClient.getInstance().player.getY() - 1.6;
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(1);
+        DataManager.logMessage("Locked faction map overlay at Y = " + df.format(fixedY));
+    }
+
+    public static void unFix()
+    {
+        isFixed = false;
+        DataManager.logMessage("Unlocked faction map overlay.");
+    }
+
+    public static int getSize()
+    {
+        if (lines == null)
+        {
+            return 0;
+        }
+        return lines.size();
+    }
+
+    public static boolean getDrawNames()
+    {
+        return drawNames;
+    }
+
+    public static void setDrawNames(boolean drawName)
+    {
+        drawNames = drawName;
+    }
+
+    private static boolean renderFactions()
     {
         if (lines.size() < 10)
         {
@@ -258,48 +317,95 @@ public class OverlayRenderer
         return true;
     }
 
-    public static void reset()
+    private static boolean renderTowny()
     {
-        lines.clear();
-        toDraw.clear();
-    }
+        TownyData townyData = DataManager.getTownyPlugin();
+        int originX = chunkCoords[0];
+        int originZ = chunkCoords[1];
+        int lineHeight = townyData.getLineHeight();
+        int lineWidth = townyData.getLineWidth();
 
-    public static void clearLines()
-    {
-        lines.clear();
-    }
-
-    public static void fix()
-    {
-        isFixed = true;
-        fixedY = MinecraftClient.getInstance().player.getY() - 1.6;
-        DecimalFormat df = new DecimalFormat();
-        df.setMaximumFractionDigits(1);
-        DataManager.logMessage("Locked faction map overlay at Y = " + df.format(fixedY));
-    }
-
-    public static void unFix()
-    {
-        isFixed = false;
-        DataManager.logMessage("Unlocked faction map overlay.");
-    }
-
-    public static int getSize()
-    {
-        if (lines == null)
+        int sizeTypeArray;
+        int n = sizeTypeArray = getTypeArray().size();
+        if (getTypeArray().size() % 2 == 0)
         {
-            return 0;
+            n++;
         }
-        return lines.size();
+        for (int i = 0; i < sizeTypeArray; i++)
+        {
+            String name = (String) getTypeArray().values().toArray()[i];
+            if (!colors.containsKey(name) && !name.equals("Unclaimed"))
+            {
+                colors.put(name, 0xFFFFFF / n * (i + 1));
+            }
+        }
+
+        for (int z = 0; z < lineHeight; z++)
+        {
+            int currentZ = originZ - lineHeight/2 + z;
+            for (int x = 0; x < lineWidth; x++)
+            {
+                int currentX = originX - lineWidth/2 + x;
+                String type = listRows.get(z).split(" ")[x];
+                String name = getTypeArray().get(type);
+                if (name == null)
+                {
+                    for (Map.Entry<String, String> entry : getTypeArray().entrySet())
+                    {
+                        if (entry.getKey().contains(""+type.charAt(2)))
+                        {
+                            name = entry.getValue();
+                        }
+                        if (type.equals("§6+"))
+                        {
+                            if(townyData.getOwnerStatus().equals(MinecraftClient.getInstance().player.getDisplayName().asString()))
+                            {
+                                name = "Your Plot";
+                            }
+                            else
+                            {
+                                name = "default";
+                            }
+                        }
+                    }
+                }
+                Chunk toAdd = new Chunk(name, currentX, currentZ, colors.get(name));
+                if (!toDraw.contains(toAdd))
+                {
+                    toDraw.addFirst(toAdd);
+                }
+            }
+        }
+        return true;
     }
 
-    public static boolean getDrawNames()
+    public static void setIsTowny(boolean towny)
     {
-        return drawNames;
+        isTowny = towny;
     }
 
-    public static void setDrawNames(boolean drawName)
+    public static void setTypeArray(Map<String, String> typeArrays)
     {
-        drawNames = drawName;
+        typeArray = typeArrays;
+    }
+
+    public static Map<String, String> getTypeArray()
+    {
+        return typeArray;
+    }
+
+    public static void setListRows(List<String> listRow)
+    {
+        listRows = listRow;
+    }
+
+    public static List<String> getListRows()
+    {
+        return listRows;
+    }
+
+    public static void setChunkCoords(int[] chunkCoord)
+    {
+        chunkCoords = chunkCoord;
     }
 }
