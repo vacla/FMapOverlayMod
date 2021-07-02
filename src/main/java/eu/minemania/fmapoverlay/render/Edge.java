@@ -1,11 +1,9 @@
 package eu.minemania.fmapoverlay.render;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import eu.minemania.fmapoverlay.config.Configs;
 import fi.dy.masa.malilib.util.Color4f;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormats;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.render.*;
 
 public class Edge
 {
@@ -25,16 +23,17 @@ public class Edge
     public void drawEdge(Tessellator tessellator, double y, int color)
     {
         BufferBuilder buffer = tessellator.getBuffer();
-        GL11.glLineWidth(5.0f);
-        buffer.begin(GL11.GL_LINES, VertexFormats.POSITION_COLOR);
+        RenderSystem.setShader(GameRenderer::getRenderTypeLinesShader);
+        buffer.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
+        RenderSystem.lineWidth(5.0f);
         Color4f internalColor = Color4f.fromColor(color);
         int alpha = 200;
         if (Configs.Generic.OVERLAY_CUSTOM_ALPHA_ENABLE.getBooleanValue())
         {
             alpha = Configs.Generic.OVERLAY_CUSTOM_ALPHA_EDGE.getIntegerValue();
         }
-        buffer.vertex(minX, y, minZ).color(internalColor.r, internalColor.g, internalColor.b, alpha).next();
-        buffer.vertex(maxX, y, maxZ).color(internalColor.r, internalColor.g, internalColor.b, alpha).next();
+        buffer.vertex(minX, y, minZ).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0).next();
+        buffer.vertex(maxX, y, maxZ).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0).next();
         tessellator.draw();
     }
 }

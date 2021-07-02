@@ -3,13 +3,11 @@ package eu.minemania.fmapoverlay.mixin;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import eu.minemania.fmapoverlay.command.Command;
-import eu.minemania.fmapoverlay.network.ClientPacketChannelHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.command.ServerCommandSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,16 +33,5 @@ public abstract class MixinClientPlayNetworkHandler
     public void onOnCommandTreeFMO(CommandTreeS2CPacket packet, CallbackInfo ci)
     {
         Command.registerCommands((CommandDispatcher<ServerCommandSource>) (Object) commandDispatcher);
-    }
-
-    @Inject(method = "onCustomPayload", cancellable = true,
-            at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/network/packet/s2c/play/CustomPayloadS2CPacket;getChannel()Lnet/minecraft/util/Identifier;"))
-    private void onCustomPayloadFMapOverlay(CustomPayloadS2CPacket packet, CallbackInfo ci)
-    {
-        if (((ClientPacketChannelHandler) ClientPacketChannelHandler.getInstance()).processPacketFromServer(packet, (ClientPlayNetworkHandler) (Object) this))
-        {
-            ci.cancel();
-        }
     }
 }

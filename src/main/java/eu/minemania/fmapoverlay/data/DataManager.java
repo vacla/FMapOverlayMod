@@ -19,7 +19,6 @@ import java.io.File;
 public class DataManager
 {
     private static boolean canSave;
-    private static TownyData townyData;
 
     private static ConfigGuiTab configGuiTab = ConfigGuiTab.GENERIC;
 
@@ -57,16 +56,6 @@ public class DataManager
         LiteralText displayMessage = new LiteralText(message);
         displayMessage.formatted(Formatting.RED);
         MinecraftClient.getInstance().player.sendMessage(displayMessage, false);
-    }
-
-    public static void setTownyPlugin(TownyData townyDataPlugin)
-    {
-        townyData = townyDataPlugin;
-    }
-
-    public static TownyData getTownyPlugin()
-    {
-        return townyData;
     }
 
     public static void load()

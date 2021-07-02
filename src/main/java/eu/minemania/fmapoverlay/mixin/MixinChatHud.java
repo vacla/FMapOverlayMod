@@ -15,7 +15,6 @@ public abstract class MixinChatHud
     {
         if (componentln.getString().matches("_+\\.\\[.*\\(-?[0-9]+.*"))
         {
-            OverlayRenderer.setIsTowny(false);
             OverlayRenderer.clearLines();
             OverlayRenderer.addLine(componentln.getString());
         }

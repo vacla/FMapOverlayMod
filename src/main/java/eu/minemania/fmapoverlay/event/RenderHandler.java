@@ -5,6 +5,7 @@ import eu.minemania.fmapoverlay.render.OverlayRenderer;
 import fi.dy.masa.malilib.interfaces.IRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Matrix4f;
 
 public class RenderHandler implements IRenderer
 {
@@ -16,7 +17,7 @@ public class RenderHandler implements IRenderer
     }
 
     @Override
-    public void onRenderWorldLast(float partialTicks, MatrixStack matrixStack)
+    public void onRenderWorldLast(MatrixStack matrixStack, Matrix4f projMatrix)
     {
         MinecraftClient mc = MinecraftClient.getInstance();
 

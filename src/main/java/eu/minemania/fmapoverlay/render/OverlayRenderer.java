@@ -4,15 +4,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import eu.minemania.fmapoverlay.FMapOverlay;
 import eu.minemania.fmapoverlay.config.Configs;
 import eu.minemania.fmapoverlay.data.DataManager;
-import eu.minemania.fmapoverlay.data.TownyData;
 import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -28,10 +25,6 @@ public class OverlayRenderer
     private static double fixedY;
     private static boolean drawNames;
     static HashMap<String, Integer> colors;
-    private static boolean isTowny;
-    private static Map<String, String> typeArray = new HashMap<>();
-    private static List<String> listRows = new ArrayList<>();
-    private static int[] chunkCoords;
 
     // https://stackoverflow.com/questions/470690/how-to-automatically-generate-n-distinct-colors
     public static final int[] KELLY_COLORS = {
@@ -96,25 +89,23 @@ public class OverlayRenderer
 
         Vec3d cameraPos = mc.gameRenderer.getCamera().getPos();
 
-        drawNames(cameraPos.x, cameraPos.y, cameraPos.z);
+        drawNames();
         drawOverlay(mc, cameraPos.x, cameraPos.y, cameraPos.z, matrices);
     }
 
     public static void drawOverlay(MinecraftClient mc, double dx, double dy, double dz, MatrixStack matrices)
     {
         mc.getProfiler().push("fmo_entities");
-        RenderSystem.pushMatrix();
-        RenderUtils.disableDiffuseLighting();
+        MatrixStack matrixStack = RenderSystem.getModelViewStack();
+        matrixStack.push();
         RenderSystem.disableCull();
         RenderUtils.setupBlend();
         RenderSystem.disableTexture();
         RenderUtils.color(1f, 1f, 1f, 1f);
-        RenderSystem.glMultiTexCoord2f(GL13.GL_TEXTURE1, 240.0F, 240.0F);
         RenderSystem.depthMask(false);
-        boolean foggy = GL11.glIsEnabled(GL11.GL_FOG);
-        RenderSystem.disableFog();
 
-        RenderSystem.translated(-dx, -dy, -dz);
+        matrixStack.translate(-dx, -dy, -dz);
+        RenderSystem.applyModelViewMatrix();
         for (Chunk chunk : toDraw)
         {
             Tessellator tessellator = Tessellator.getInstance();
@@ -134,29 +125,27 @@ public class OverlayRenderer
                 }
             }
         }
-        if (foggy)
-        {
-            RenderSystem.enableFog();
-        }
+
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
         RenderSystem.enableCull();
-        RenderUtils.enableDiffuseLightingForLevel(matrices);
-        RenderSystem.popMatrix();
+
+        matrixStack.pop();
+        RenderSystem.applyModelViewMatrix();
         mc.getProfiler().pop();
     }
 
-    public static void drawNames(double dx, double dy, double dz)
+    public static void drawNames()
     {
         for (Chunk chunk : toDraw)
         {
             if (isFixed)
             {
-                chunk.drawName(fixedY + 1.6, dx, dy, dz);
+                chunk.drawName(fixedY + 1.6);
             }
             else
             {
-                chunk.drawName(dx, dy, dz);
+                chunk.drawName();
             }
         }
     }
@@ -168,10 +157,6 @@ public class OverlayRenderer
 
     public static boolean parseMap()
     {
-        if (isTowny)
-        {
-            return renderTowny();
-        }
         return renderFactions();
     }
 
@@ -315,97 +300,5 @@ public class OverlayRenderer
             }
         }
         return true;
-    }
-
-    private static boolean renderTowny()
-    {
-        TownyData townyData = DataManager.getTownyPlugin();
-        int originX = chunkCoords[0];
-        int originZ = chunkCoords[1];
-        int lineHeight = townyData.getLineHeight();
-        int lineWidth = townyData.getLineWidth();
-
-        int sizeTypeArray;
-        int n = sizeTypeArray = getTypeArray().size();
-        if (getTypeArray().size() % 2 == 0)
-        {
-            n++;
-        }
-        for (int i = 0; i < sizeTypeArray; i++)
-        {
-            String name = (String) getTypeArray().values().toArray()[i];
-            if (!colors.containsKey(name) && !name.equals("Unclaimed"))
-            {
-                colors.put(name, 0xFFFFFF / n * (i + 1));
-            }
-        }
-
-        for (int z = 0; z < lineHeight; z++)
-        {
-            int currentZ = originZ - lineHeight/2 + z;
-            for (int x = 0; x < lineWidth; x++)
-            {
-                int currentX = originX - lineWidth/2 + x;
-                String type = listRows.get(z).split(" ")[x];
-                String name = getTypeArray().get(type);
-                if (name == null)
-                {
-                    for (Map.Entry<String, String> entry : getTypeArray().entrySet())
-                    {
-                        if (entry.getKey().contains(""+type.charAt(2)))
-                        {
-                            name = entry.getValue();
-                        }
-                        if (type.equals("§6+"))
-                        {
-                            if(townyData.getOwnerStatus().equals(MinecraftClient.getInstance().player.getDisplayName().asString()))
-                            {
-                                name = "Your Plot";
-                            }
-                            else
-                            {
-                                name = "default";
-                            }
-                        }
-                    }
-                }
-                Chunk toAdd = new Chunk(name, currentX, currentZ, colors.get(name));
-                if (!toDraw.contains(toAdd))
-                {
-                    toDraw.addFirst(toAdd);
-                }
-            }
-        }
-        return true;
-    }
-
-    public static void setIsTowny(boolean towny)
-    {
-        isTowny = towny;
-    }
-
-    public static void setTypeArray(Map<String, String> typeArrays)
-    {
-        typeArray = typeArrays;
-    }
-
-    public static Map<String, String> getTypeArray()
-    {
-        return typeArray;
-    }
-
-    public static void setListRows(List<String> listRow)
-    {
-        listRows = listRow;
-    }
-
-    public static List<String> getListRows()
-    {
-        return listRows;
-    }
-
-    public static void setChunkCoords(int[] chunkCoord)
-    {
-        chunkCoords = chunkCoord;
     }
 }
