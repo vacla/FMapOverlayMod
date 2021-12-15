@@ -6,6 +6,7 @@ import eu.minemania.fmapoverlay.config.Configs;
 import eu.minemania.fmapoverlay.data.DataManager;
 import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BackgroundRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -96,6 +97,8 @@ public class OverlayRenderer
     public static void drawOverlay(MinecraftClient mc, double dx, double dy, double dz, MatrixStack matrices)
     {
         mc.getProfiler().push("fmo_entities");
+        float fogStart = RenderSystem.getShaderFogStart();
+        BackgroundRenderer.clearFog();
         MatrixStack matrixStack = RenderSystem.getModelViewStack();
         matrixStack.push();
         RenderSystem.disableCull();
@@ -132,6 +135,8 @@ public class OverlayRenderer
 
         matrixStack.pop();
         RenderSystem.applyModelViewMatrix();
+
+        RenderSystem.setShaderFogStart(fogStart);
         mc.getProfiler().pop();
     }
 
