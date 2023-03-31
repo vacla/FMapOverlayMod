@@ -10,7 +10,8 @@ import fi.dy.masa.malilib.util.JsonUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.malilib.util.WorldUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import eu.minemania.fmapoverlay.gui.GuiConfigs.ConfigGuiTab;
 
@@ -41,7 +42,7 @@ public class DataManager
      */
     public static void logMessage(String message)
     {
-        LiteralText displayMessage = new LiteralText(message);
+        MutableText displayMessage = Text.literal(message);
         displayMessage.formatted(Formatting.GREEN);
         MinecraftClient.getInstance().player.sendMessage(displayMessage, false);
     }
@@ -53,7 +54,7 @@ public class DataManager
      */
     public static void logError(String message)
     {
-        LiteralText displayMessage = new LiteralText(message);
+        MutableText displayMessage = Text.literal(message);
         displayMessage.formatted(Formatting.RED);
         MinecraftClient.getInstance().player.sendMessage(displayMessage, false);
     }
