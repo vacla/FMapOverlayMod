@@ -5,7 +5,7 @@ on:
       loaders:
         description: 'Loaders'
         required: true
-        default: '["Fabric","Quilt"]'
+        default: '["fabric","quilt"]'
 
 permissions:
   contents: write

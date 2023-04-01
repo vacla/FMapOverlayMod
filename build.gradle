@@ -77,7 +77,7 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
 	mainFile.addRequirement(project.curseforge_required_dep)
 	mainFile.addGameVersion(project.minecraft_version)
 	for (loader in loadersResult) {
-		mainFile.addModLoader(loader)
+		mainFile.addModLoader(loader.capitalize())
 	}
 }
 
@@ -91,7 +91,7 @@ modrinth {
 	versionName = VERSION
 	versionType = "release"
 	changelog = CHANGELOG
-	gameVersions = [project.minecraft_version_modrinth]
+	gameVersions = [project.minecraft_version]
 	loaders = loadersResult
 	uploadFile = remapJar
 	debugMode = project.modrinth_debug.toBoolean()
