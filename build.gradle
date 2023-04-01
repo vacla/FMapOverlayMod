@@ -13,9 +13,6 @@ if (ENV.LOADERS) {
 	def jsonSlurper = new JsonSlurper()
 	loadersResult = jsonSlurper.parseText(ENV.LOADERS)
 }
-def CHANGELOG = ENV.CHANGELOG ?: "No changelog provided"
-def VERSION = project.mod_name + " " + project.version
-def mainFile = null
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
@@ -39,6 +36,9 @@ dependencies {
 group = project.group + "." + project.mod_id // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = project.mod_file_name
 version = project.mod_version + '+' + project.minecraft_version_mod
+def CHANGELOG = ENV.CHANGELOG ?: "No changelog provided"
+def VERSION = project.mod_name + " " + project.version
+def mainFile = null
 
 processResources {
 	exclude '**/*.xcf'
