@@ -4,7 +4,7 @@ import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
 import eu.minemania.fmapoverlay.command.ClientCommandManager;
 import eu.minemania.fmapoverlay.interfaces.ITextFieldWidget;
-import net.minecraft.client.gui.screen.CommandSuggestor;
+import net.minecraft.client.gui.screen.ChatInputSuggestor;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.command.CommandSource;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(CommandSuggestor.class)
+@Mixin(ChatInputSuggestor.class)
 public abstract class MixinCommandSuggestor
 {
     @Accessor("textField")

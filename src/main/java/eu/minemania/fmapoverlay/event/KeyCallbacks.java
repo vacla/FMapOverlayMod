@@ -125,7 +125,7 @@ public class KeyCallbacks
                     if (!DataManager.getJustPressed())
                     {
                         DataManager.logMessage("Auto-running /f map... press again to display overlay");
-                        mc.player.sendChatMessage("/f map");
+                        mc.player.sendCommand("f map");
                         DataManager.setJustPressed(true);
                     }
                     else
