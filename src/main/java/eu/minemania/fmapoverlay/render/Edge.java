@@ -7,10 +7,10 @@ import net.minecraft.client.render.*;
 
 public class Edge
 {
-    private int minX;
-    private int maxX;
-    private int minZ;
-    private int maxZ;
+    private final int minX;
+    private final int maxX;
+    private final int minZ;
+    private final int maxZ;
 
     public Edge(int x1, int z1, int x2, int z2)
     {
@@ -23,7 +23,7 @@ public class Edge
     public void drawEdge(Tessellator tessellator, double y, int color)
     {
         BufferBuilder buffer = tessellator.getBuffer();
-        RenderSystem.setShader(GameRenderer::getRenderTypeLinesShader);
+        RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
         buffer.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
         RenderSystem.lineWidth(5.0f);
         Color4f internalColor = Color4f.fromColor(color);

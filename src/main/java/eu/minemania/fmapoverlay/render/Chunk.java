@@ -13,10 +13,10 @@ import java.util.Arrays;
 public class Chunk
 {
     public String name;
-    private int x;
-    private int z;
-    private int color;
-    private Edge edge;
+    private final int x;
+    private final int z;
+    private final int color;
+    private final Edge edge;
 
     public Chunk(String name, int x, int z, int color)
     {
@@ -40,7 +40,7 @@ public class Chunk
     public void shadeChunk(Tessellator tessellator, double y)
     {
         BufferBuilder buffer = tessellator.getBuffer();
-        RenderSystem.setShader(GameRenderer::getRenderTypeLinesShader);
+        RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
         buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.LINES);
         Color4f internalColor = Color4f.fromColor(color);
         int alpha = 80;
@@ -88,7 +88,7 @@ public class Chunk
         }
         y -= 1.6;
         BufferBuilder buffer = tessellator.getBuffer();
-        RenderSystem.setShader(GameRenderer::getRenderTypeLinesShader);
+        RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
         buffer.begin(VertexFormat.DrawMode.LINE_STRIP, VertexFormats.LINES);
         RenderSystem.lineWidth(3.0f);
         Color4f internalColor = Color4f.fromColor(color);
@@ -119,10 +119,6 @@ public class Chunk
         {
             return false;
         }
-        if (this.z != ((Chunk) obj).z)
-        {
-            return false;
-        }
-        return true;
+        return this.z == ((Chunk) obj).z;
     }
 }
