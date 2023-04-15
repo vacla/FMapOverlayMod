@@ -103,7 +103,6 @@ public class OverlayRenderer
         matrixStack.push();
         RenderSystem.disableCull();
         RenderUtils.setupBlend();
-        RenderSystem.disableTexture();
         RenderUtils.color(1f, 1f, 1f, 1f);
         RenderSystem.depthMask(false);
 
@@ -129,13 +128,10 @@ public class OverlayRenderer
             }
         }
 
-        RenderSystem.enableTexture();
         RenderSystem.disableBlend();
         RenderSystem.enableCull();
 
         matrixStack.pop();
-        RenderSystem.applyModelViewMatrix();
-
         RenderSystem.setShaderFogStart(fogStart);
         mc.getProfiler().pop();
     }
