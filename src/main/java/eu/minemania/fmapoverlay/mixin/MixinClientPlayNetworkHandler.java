@@ -1,15 +1,12 @@
 package eu.minemania.fmapoverlay.mixin;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.StringReader;
 import eu.minemania.fmapoverlay.command.ClientCommandManager;
 import eu.minemania.fmapoverlay.command.Command;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.network.ClientConnectionState;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ServerInfo;
-import net.minecraft.client.util.telemetry.WorldSession;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.CommandTreeS2CPacket;
 import net.minecraft.server.command.ServerCommandSource;
@@ -27,7 +24,7 @@ public abstract class MixinClientPlayNetworkHandler
 
     @SuppressWarnings("unchecked")
     @Inject(method = "<init>", at = @At("RETURN"))
-    public void onInitFMO(MinecraftClient client, Screen screen, ClientConnection connection, ServerInfo serverInfo, GameProfile profile, WorldSession worldSession, CallbackInfo ci)
+    public void onInit(MinecraftClient client, ClientConnection clientConnection, ClientConnectionState clientConnectionState, CallbackInfo ci)
     {
         Command.registerCommands((CommandDispatcher<ServerCommandSource>) (Object) commandDispatcher);
     }
