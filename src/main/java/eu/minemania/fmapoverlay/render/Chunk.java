@@ -90,7 +90,7 @@ public class Chunk
         BufferBuilder buffer = tessellator.getBuffer();
         RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
         buffer.begin(VertexFormat.DrawMode.LINE_STRIP, VertexFormats.LINES);
-        RenderSystem.lineWidth(3.0f);
+        RenderSystem.lineWidth(5.0f);
         Color4f internalColor = Color4f.fromColor(color);
         int alpha = 200;
         if (Configs.Generic.OVERLAY_CUSTOM_ALPHA_ENABLE.getBooleanValue())
