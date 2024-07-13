@@ -8,9 +8,9 @@ import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BackgroundRenderer;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Matrix4fStack;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -58,7 +58,7 @@ public class OverlayRenderer
         loginTime = System.currentTimeMillis();
     }
 
-    public static void renderOverlays(MinecraftClient mc, MatrixStack matrices)
+    public static void renderOverlays(MinecraftClient mc)
     {
         Entity entity = mc.getCameraEntity();
 
@@ -91,22 +91,22 @@ public class OverlayRenderer
         Vec3d cameraPos = mc.gameRenderer.getCamera().getPos();
 
         drawNames();
-        drawOverlay(mc, cameraPos.x, cameraPos.y, cameraPos.z, matrices);
+        drawOverlay(mc, cameraPos.x, cameraPos.y, cameraPos.z);
     }
 
-    public static void drawOverlay(MinecraftClient mc, double dx, double dy, double dz, MatrixStack matrices)
+    public static void drawOverlay(MinecraftClient mc, double dx, double dy, double dz)
     {
         mc.getProfiler().push("fmo_entities");
         float fogStart = RenderSystem.getShaderFogStart();
         BackgroundRenderer.clearFog();
-        MatrixStack matrixStack = RenderSystem.getModelViewStack();
-        matrixStack.push();
+        Matrix4fStack matrix4fStack = RenderSystem.getModelViewStack();
+        matrix4fStack.pushMatrix();
         RenderSystem.disableCull();
         RenderUtils.setupBlend();
         RenderUtils.color(1f, 1f, 1f, 1f);
         RenderSystem.depthMask(false);
 
-        matrixStack.translate(-dx, -dy, -dz);
+        matrix4fStack.translate((float) -dx, (float) -dy, (float) -dz);
         RenderSystem.applyModelViewMatrix();
         for (Chunk chunk : toDraw)
         {
@@ -131,7 +131,7 @@ public class OverlayRenderer
         RenderSystem.disableBlend();
         RenderSystem.enableCull();
 
-        matrixStack.pop();
+        matrix4fStack.popMatrix();
         RenderSystem.setShaderFogStart(fogStart);
         mc.getProfiler().pop();
     }
