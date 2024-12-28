@@ -75,7 +75,7 @@ public class Chunk
             {
                 y = Configs.Generic.NAMES_CUSTOM_HEIGHT.getIntegerValue();
             }
-            RenderUtils.drawTextPlate(Arrays.asList(this.name), this.x * 16 + 8, y, this.z * 16 + 8, entity.getYaw(), entity.getPitch(), 0.04f, 0xFFFFFFFF, 0x80000000, false);
+            RenderUtils.drawTextPlate(Arrays.asList(this.name.split("\n")), this.x * 16 + 8, y, this.z * 16 + 8, entity.getYaw(), entity.getPitch(), 0.04f, 0xFFFFFFFF, 0x80000000, false);
         }
     }
 

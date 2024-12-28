@@ -9,6 +9,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BackgroundRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.entity.Entity;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix4fStack;
 
@@ -20,6 +22,7 @@ public class OverlayRenderer
     private static long loginTime;
     private static boolean canRender;
     private static LinkedList<String> lines;
+    private static ArrayList<ArrayList<String>> infoLines;
     private static LinkedList<Chunk> toDraw;
     private static HashMap<Character, String> factions;
     private static boolean isFixed;
@@ -65,6 +68,7 @@ public class OverlayRenderer
         if (!canRender)
         {
             lines = new LinkedList<>();
+            infoLines = new ArrayList<>();
             toDraw = new LinkedList<>();
             factions = new HashMap<>();
             isFixed = false;
@@ -156,6 +160,33 @@ public class OverlayRenderer
         lines.addLast(line);
     }
 
+    public static void addInfoLines(List<Text> textList)
+    {
+        ArrayList<String> text = new ArrayList<>();
+        int i;
+        for (i = 0; i < textList.size(); i++)
+        {
+            HoverEvent hoverEvent = textList.get(i).getStyle().getHoverEvent();
+            if (hoverEvent == null)
+            {
+                text.add("IGNORED");
+                continue;
+            }
+
+            Text textValue = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
+            if (textValue == null)
+            {
+                text.add("IGNORED");
+                continue;
+            }
+
+            String textValueString = textValue.getString().isEmpty() ? "IGNORED" : textValue.getString();
+
+            text.add(textValueString);
+        }
+        infoLines.add(text);
+    }
+
     public static boolean parseMap()
     {
         return renderFactions();
@@ -164,12 +195,14 @@ public class OverlayRenderer
     public static void reset()
     {
         lines.clear();
+        infoLines.clear();
         toDraw.clear();
     }
 
     public static void clearLines()
     {
         lines.clear();
+        infoLines.clear();
     }
 
     public static void fix()
@@ -290,9 +323,11 @@ public class OverlayRenderer
                 {
                     name = originFaction;
                 }
+                String customName = name;
+                customName = getCustomName(x, z, currentLine, currentChar, name, customName);
                 if (colors.get(name) != null)
                 {
-                    Chunk toAdd = new Chunk(name, currentX, currentZ, colors.get(name));
+                    Chunk toAdd = new Chunk(customName, currentX, currentZ, colors.get(name));
                     if (!toDraw.contains(toAdd))
                     {
                         toDraw.addFirst(toAdd);
@@ -301,5 +336,33 @@ public class OverlayRenderer
             }
         }
         return true;
+    }
+
+    private static String getCustomName(int x, int z, String currentLine, int currentChar, String name, String customName)
+    {
+        try
+        {
+            if (z < 3) {
+                if (x >= 46) {
+                    FMapOverlay.logger.info(name);
+                    return name;
+                }
+            }
+            customName = infoLines.get(z).get(x);
+            if (customName.equals("IGNORED"))
+            {
+                customName = name;
+            }
+        } catch (Exception e)
+        {
+            FMapOverlay.logger.info("x: " + x + " z: " + z + " exception: " + e.getMessage() + " line: " + currentLine + " char: " + currentChar + " infoLines: " + infoLines.get(z).size());
+        }
+
+        return customName;
+    }
+
+    public static HashMap<Character, String> getFactions()
+    {
+        return factions;
     }
 }

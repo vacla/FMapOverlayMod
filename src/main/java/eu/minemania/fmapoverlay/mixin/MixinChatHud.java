@@ -21,6 +21,7 @@ public abstract class MixinChatHud
         else if (OverlayRenderer.getSize() > 0 && OverlayRenderer.getSize() < 19)
         {
             OverlayRenderer.addLine(componentln.getString());
+            OverlayRenderer.addInfoLines(componentln.getSiblings());
         }
         return componentln;
     }

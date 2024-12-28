@@ -10,6 +10,7 @@ import eu.minemania.fmapoverlay.render.OverlayRenderer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import static com.mojang.brigadier.arguments.BoolArgumentType.bool;
@@ -25,6 +26,7 @@ public class FMapOverlayCommand extends FMapOverlayCommandBase
     {
         ClientCommandManager.addClientSideCommand("fmo");
         LiteralArgumentBuilder<ServerCommandSource> fmo = literal("fmo").executes(FMapOverlayCommand::info)
+                .then(literal("factionNames").executes(FMapOverlayCommand::factionNames))
                 .then(literal("on").executes(FMapOverlayCommand::on))
                 .then(literal("off").executes(FMapOverlayCommand::off))
                 .then(literal("display").executes(FMapOverlayCommand::display))
@@ -315,6 +317,12 @@ public class FMapOverlayCommand extends FMapOverlayCommandBase
             Configs.Generic.OVERLAY_EDGE.toggleBooleanValue();
         }
         localOutput(context.getSource(), String.format("Overlay edge %s", enabled ? "enabled" : "disabled"));
+        return 1;
+    }
+
+    private static int factionNames(CommandContext<ServerCommandSource> context)
+    {
+        localOutput(context.getSource(), String.format("Faction names %s", Arrays.toString(OverlayRenderer.getFactions().values().toArray())));
         return 1;
     }
 
