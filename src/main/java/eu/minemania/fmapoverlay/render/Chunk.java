@@ -3,7 +3,7 @@ package eu.minemania.fmapoverlay.render;
 import com.mojang.blaze3d.systems.RenderSystem;
 import eu.minemania.fmapoverlay.config.Configs;
 import fi.dy.masa.malilib.render.RenderUtils;
-import fi.dy.masa.malilib.util.Color4f;
+import fi.dy.masa.malilib.util.data.Color4f;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.entity.Entity;
@@ -34,26 +34,33 @@ public class Chunk
         {
             y = Configs.Generic.OVERLAY_CUSTOM_HEIGHT.getIntegerValue();
         }
-        this.shadeChunk(tessellator, y - 1.6);
+        this.shadeChunk(tessellator, (float) (y - 1.6));
     }
 
-    public void shadeChunk(Tessellator tessellator, double y)
+    public void shadeChunk(Tessellator tessellator, float y)
     {
-        BufferBuilder buffer = tessellator.getBuffer();
         RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
-        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.LINES);
+        BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.LINES);
+        BuiltBuffer builtBuffer;
         Color4f internalColor = Color4f.fromColor(color);
         int alpha = 80;
         if (Configs.Generic.OVERLAY_CUSTOM_ALPHA_ENABLE.getBooleanValue())
         {
             alpha = Configs.Generic.OVERLAY_CUSTOM_ALPHA_CHUNK.getIntegerValue();
         }
-        buffer.vertex(this.x * 16, y, this.z * 16).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0).next();
-        buffer.vertex(this.x * 16, y, this.z * 16 + 16).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0).next();
-        buffer.vertex(this.x * 16 + 16, y, this.z * 16 + 16).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0).next();
-        buffer.vertex(this.x * 16 + 16, y, this.z * 16).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0).next();
+        buffer.vertex(this.x * 16, y, this.z * 16).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0);
+        buffer.vertex(this.x * 16, y, this.z * 16 + 16).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0);
+        buffer.vertex(this.x * 16 + 16, y, this.z * 16 + 16).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0);
+        buffer.vertex(this.x * 16 + 16, y, this.z * 16).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0);
 
-        tessellator.draw();
+        try {
+            builtBuffer = buffer.end();
+            BufferRenderer.drawWithGlobalProgram(builtBuffer);
+            builtBuffer.close();
+        } catch (Exception e) {
+            // Ignored
+        }
+
         if (Configs.Generic.OVERLAY_EDGE.getBooleanValue())
         {
             edge.drawEdge(tessellator, y, color);
@@ -87,9 +94,9 @@ public class Chunk
             y = Configs.Generic.OVERLAY_CUSTOM_HEIGHT.getIntegerValue();
         }
         y -= 1.6;
-        BufferBuilder buffer = tessellator.getBuffer();
         RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
-        buffer.begin(VertexFormat.DrawMode.LINE_STRIP, VertexFormats.LINES);
+        BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.LINE_STRIP, VertexFormats.LINES);
+        BuiltBuffer builtBuffer;
         RenderSystem.lineWidth(5.0f);
         Color4f internalColor = Color4f.fromColor(color);
         int alpha = 200;
@@ -97,11 +104,17 @@ public class Chunk
         {
             alpha = Configs.Generic.OVERLAY_CUSTOM_ALPHA_LINE.getIntegerValue();
         }
-        buffer.vertex(this.x * 16 + 0.1, y, this.z * 16 + 0.1).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0).next();
-        buffer.vertex(this.x * 16 + 0.1, y, this.z * 16 + 15.9).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0).next();
-        buffer.vertex(this.x * 16 + 15.9, y, this.z * 16 + 15.9).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0).next();
-        buffer.vertex(this.x * 16 + 15.9, y, this.z * 16 + 0.1).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0).next();
-        tessellator.draw();
+        buffer.vertex((float) (this.x * 16 + 0.1), (float) y, (float) (this.z * 16 + 0.1)).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0);
+        buffer.vertex((float) (this.x * 16 + 0.1), (float) y, (float) (this.z * 16 + 15.9)).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0);
+        buffer.vertex((float) (this.x * 16 + 15.9), (float) y, (float) (this.z * 16 + 15.9)).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0);
+        buffer.vertex((float) (this.x * 16 + 15.9), (float) y, (float) (this.z * 16 + 0.1)).color(internalColor.r, internalColor.g, internalColor.b, alpha).normal(0,0,0);
+        try {
+            builtBuffer = buffer.end();
+            BufferRenderer.drawWithGlobalProgram(builtBuffer);
+            builtBuffer.close();
+        } catch (Exception e) {
+            // Ignored
+        }
         if (Configs.Generic.OVERLAY_EDGE.getBooleanValue())
         {
             edge.drawEdge(tessellator, y, color);

@@ -26,7 +26,7 @@ public class OverlayRenderer
     private static LinkedList<Chunk> toDraw;
     private static HashMap<Character, String> factions;
     private static boolean isFixed;
-    private static double fixedY;
+    private static float fixedY;
     private static boolean drawNames;
     static HashMap<String, Integer> colors;
 
@@ -208,7 +208,7 @@ public class OverlayRenderer
     public static void fix()
     {
         isFixed = true;
-        fixedY = MinecraftClient.getInstance().player.getY() - 1.6;
+        fixedY = (float) (MinecraftClient.getInstance().player.getY() - 1.6);
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(1);
         DataManager.logMessage("Locked faction map overlay at Y = " + df.format(fixedY));

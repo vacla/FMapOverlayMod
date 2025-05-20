@@ -8,14 +8,14 @@ import eu.minemania.fmapoverlay.Reference;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
 import fi.dy.masa.malilib.util.StringUtils;
-import fi.dy.masa.malilib.util.WorldUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import eu.minemania.fmapoverlay.gui.GuiConfigs.ConfigGuiTab;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class DataManager
 {
@@ -61,9 +61,9 @@ public class DataManager
 
     public static void load()
     {
-        File file = getCurrentStorageFile(true);
+        Path file = getCurrentStorageFile();
 
-        JsonElement element = JsonUtils.parseJsonFile(file);
+        JsonElement element = JsonUtils.parseJsonFileAsPath(file);
 
         if (element != null && element.isJsonObject())
         {
@@ -106,47 +106,44 @@ public class DataManager
 
         root.add("config_gui_tab", new JsonPrimitive(configGuiTab.name()));
 
-        File file = getCurrentStorageFile(true);
-        JsonUtils.writeJsonToFile(root, file);
+        Path file = getCurrentStorageFile();
+        JsonUtils.writeJsonToFileAsPath(root, file);
 
         canSave = false;
     }
 
-    private static File getCurrentStorageFile(boolean globalData)
+    private static Path getCurrentStorageFile()
     {
-        File dir = getCurrentConfigDirectory();
+        Path dir = getCurrentConfigDirectory();
 
-        if (!dir.exists() && !dir.mkdirs())
+        if (!Files.exists(dir))
         {
-            FMapOverlay.logger.warn("Failed to create the config directory '{}'", dir.getAbsolutePath());
+            FileUtils.createDirectoriesIfMissing(dir);
         }
 
-        return new File(dir, getStorageFileName(globalData));
+        if (!Files.isDirectory(dir))
+        {
+            FMapOverlay.logger.warn("Failed to create the config directory '{}'", dir.toAbsolutePath());
+        }
+
+        return dir.resolve(getStorageFileName());
     }
 
-    private static String getStorageFileName(boolean globalData)
+    private static String getStorageFileName()
     {
-        MinecraftClient mc = MinecraftClient.getInstance();
         String name = StringUtils.getWorldOrServerName();
 
-        if (name != null)
+        if (name == null)
         {
-            if (globalData)
-            {
-                return Reference.MOD_ID + "_" + name + ".json";
-            }
-            else
-            {
-                return Reference.MOD_ID + "_" + name + "_dim" + WorldUtils.getDimensionId(mc.world) + ".json";
-            }
+            return Reference.MOD_ID + "_default.json";
         }
 
-        return Reference.MOD_ID + "_default.json";
+        return Reference.MOD_ID + "_" + name + ".json";
     }
 
-    public static File getCurrentConfigDirectory()
+    public static Path getCurrentConfigDirectory()
     {
-        return new File(FileUtils.getConfigDirectory(), Reference.MOD_ID);
+        return FileUtils.getConfigDirectoryAsPath().resolve(Reference.MOD_ID);
     }
 
     public static boolean getJustPressed()
