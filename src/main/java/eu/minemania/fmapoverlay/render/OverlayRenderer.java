@@ -6,12 +6,13 @@ import eu.minemania.fmapoverlay.config.Configs;
 import eu.minemania.fmapoverlay.data.DataManager;
 import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.BackgroundRenderer;
+import net.minecraft.client.render.Fog;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.profiler.Profiler;
 import org.joml.Matrix4fStack;
 
 import java.text.DecimalFormat;
@@ -61,7 +62,7 @@ public class OverlayRenderer
         loginTime = System.currentTimeMillis();
     }
 
-    public static void renderOverlays(MinecraftClient mc)
+    public static void renderOverlays(MinecraftClient mc, Profiler profiler, Fog fog)
     {
         Entity entity = mc.getCameraEntity();
 
@@ -95,14 +96,13 @@ public class OverlayRenderer
         Vec3d cameraPos = mc.gameRenderer.getCamera().getPos();
 
         drawNames();
-        drawOverlay(mc, cameraPos.x, cameraPos.y, cameraPos.z);
+        drawOverlay(mc, cameraPos.x, cameraPos.y, cameraPos.z, profiler, fog);
     }
 
-    public static void drawOverlay(MinecraftClient mc, double dx, double dy, double dz)
+    public static void drawOverlay(MinecraftClient mc, double dx, double dy, double dz, Profiler profiler, Fog fog)
     {
-        mc.getProfiler().push("fmo_entities");
-        float fogStart = RenderSystem.getShaderFogStart();
-        BackgroundRenderer.clearFog();
+        profiler.push(() -> "fmo_entities");
+        RenderSystem.setShaderFog(Fog.DUMMY);
         Matrix4fStack matrix4fStack = RenderSystem.getModelViewStack();
         matrix4fStack.pushMatrix();
         RenderSystem.disableCull();
@@ -111,7 +111,6 @@ public class OverlayRenderer
         RenderSystem.depthMask(false);
 
         matrix4fStack.translate((float) -dx, (float) -dy, (float) -dz);
-        RenderSystem.applyModelViewMatrix();
         for (Chunk chunk : toDraw)
         {
             Tessellator tessellator = Tessellator.getInstance();
@@ -136,8 +135,8 @@ public class OverlayRenderer
         RenderSystem.enableCull();
 
         matrix4fStack.popMatrix();
-        RenderSystem.setShaderFogStart(fogStart);
-        mc.getProfiler().pop();
+        RenderSystem.setShaderFog(fog);
+        profiler.pop();
     }
 
     public static void drawNames()

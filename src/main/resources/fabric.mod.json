@@ -16,6 +16,7 @@
     "discord": "https://discord.gg/VTHVVgt"
   },
   "license": "MIT",
+  "icon": "assets/fmapoverlay/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [

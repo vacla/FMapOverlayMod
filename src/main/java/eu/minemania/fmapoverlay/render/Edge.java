@@ -3,6 +3,7 @@ package eu.minemania.fmapoverlay.render;
 import com.mojang.blaze3d.systems.RenderSystem;
 import eu.minemania.fmapoverlay.config.Configs;
 import fi.dy.masa.malilib.util.data.Color4f;
+import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.render.*;
 
 public class Edge
@@ -22,7 +23,7 @@ public class Edge
 
     public void drawEdge(Tessellator tessellator, double y, int color)
     {
-        RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
+        RenderSystem.setShader(ShaderProgramKeys.RENDERTYPE_LINES);
         BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
         BuiltBuffer builtBuffer;
         RenderSystem.lineWidth(5.0f);

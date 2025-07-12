@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.10+1.21.3] - 2025-07-12
+
+### Added
+- Support Minecraft 1.21.2-1.21.3
+- Image for ModMenu
+
 ## [1.4.9+1.21] - 2025-05-04
 
 ### Added

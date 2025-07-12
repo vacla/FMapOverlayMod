@@ -5,6 +5,7 @@ import eu.minemania.fmapoverlay.config.Configs;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.data.Color4f;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.render.*;
 import net.minecraft.entity.Entity;
 
@@ -39,7 +40,7 @@ public class Chunk
 
     public void shadeChunk(Tessellator tessellator, float y)
     {
-        RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
+        RenderSystem.setShader(ShaderProgramKeys.RENDERTYPE_LINES);
         BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.LINES);
         BuiltBuffer builtBuffer;
         Color4f internalColor = Color4f.fromColor(color);
@@ -94,7 +95,7 @@ public class Chunk
             y = Configs.Generic.OVERLAY_CUSTOM_HEIGHT.getIntegerValue();
         }
         y -= 1.6;
-        RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
+        RenderSystem.setShader(ShaderProgramKeys.RENDERTYPE_LINES);
         BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.LINE_STRIP, VertexFormats.LINES);
         BuiltBuffer builtBuffer;
         RenderSystem.lineWidth(5.0f);
